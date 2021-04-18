@@ -3,6 +3,7 @@ package com.code.ly.flink.stream.watermark
 import java.time.Duration
 
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, Watermark, WatermarkGenerator, WatermarkOutput, WatermarkStrategy}
+import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala._
 
@@ -11,31 +12,34 @@ import org.apache.flink.streaming.api.scala._
  * 输入数据格式 样例： 100,hello  101,hi
  */
 object BasicWatermarkUse {
-    val env = StreamExecutionEnvironment.getExecutionEnvironment
+    def main(args: Array[String]): Unit = {
+        val env = StreamExecutionEnvironment.getExecutionEnvironment
 
 
-    val stream = env.socketTextStream("",8080)
-        .map(str => {
-            val tokens=str.split(",")
-            (tokens(0).toLong, tokens(1))
-        })
+        val stream = env.socketTextStream("",8080)
+            .map(str => {
+                val tokens=str.split(",")
+                (tokens(0).toLong, tokens(1))
+            })
 
+        val x = AssignerWithPeriodicWatermarks
+        /** ---------------------- 内置 watermark策略 ----------------------- **/
 
-     /** ---------------------- 内置 watermark策略 ----------------------- **/
+        // 1.forMonotonousTimestamps  單調遞增時間戳場景策略
+        val watermarkStream1 = stream.assignTimestampsAndWatermarks(WatermarkStrategy.forMonotonousTimestamps[(Long,String)].withTimestampAssigner(
+            new SerializableTimestampAssigner[(Long,String)]() {
+                override def extractTimestamp(element: (Long,String), recordTimestamp: Long): Long = element._1
+            }
+        ))
 
-    // 1.forMonotonousTimestamps  單調遞增時間戳場景策略
-    val watermarkStream1 = stream.assignTimestampsAndWatermarks(WatermarkStrategy.forMonotonousTimestamps[(Long,String)].withTimestampAssigner(
-        new SerializableTimestampAssigner[(Long,String)]() {
-            override def extractTimestamp(element: (Long,String), recordTimestamp: Long): Long = element._1
-        }
-    ))
+        //2.forBoundedOutOfOrderness  固定時延場景策略
+        val watermarkStream2 = stream.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(10)).withTimestampAssigner(
+            new SerializableTimestampAssigner[(Long,String)]() {
+                override def extractTimestamp(element: (Long,String), recordTimestamp: Long): Long = element._1
+            }
+        ))
+    }
 
-    //2.forBoundedOutOfOrderness  固定時延場景策略
-    val watermarkStream2 = stream.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(10)).withTimestampAssigner(
-        new SerializableTimestampAssigner[(Long,String)]() {
-            override def extractTimestamp(element: (Long,String), recordTimestamp: Long): Long = element._1
-        }
-    ))
 }
 
 
@@ -74,3 +78,7 @@ object MyPunctuatedWatermarkGenerator extends WatermarkGenerator[(Long, String)]
     }
     override def onPeriodicEmit(output: WatermarkOutput): Unit = {}
 }
+
+/**
+ * 数据源产生watermark
+ */

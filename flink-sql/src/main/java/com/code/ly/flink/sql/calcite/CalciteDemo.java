@@ -110,7 +110,7 @@ public class CalciteDemo {
         root = root.withRel(RelDecorrelator.decorrelateQuery(root.rel, relBuilder));
 
         RelNode relNode = root.rel;
-
+        planner.setRoot(relNode);
         System.out.println("finish");
     }
 
