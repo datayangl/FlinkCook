@@ -22,7 +22,6 @@ object BasicWatermarkUse {
                 (tokens(0).toLong, tokens(1))
             })
 
-        val x = AssignerWithPeriodicWatermarks
         /** ---------------------- 内置 watermark策略 ----------------------- **/
 
         // 1.forMonotonousTimestamps  單調遞增時間戳場景策略

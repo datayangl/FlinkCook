@@ -18,15 +18,15 @@ object WindowUV {
             UserBehavior(list(0).toLong,list(1).toLong, list(2), list(3).toInt, list(4).toInt, list(5).toLong)
         })
 
-        val windowedStream = stream.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(10))
-            .withTimestampAssigner(
-                new SerializableTimestampAssigner[UserBehavior]() {
-                    override def extractTimestamp(element: UserBehavior, recordTimestamp: Long): Long = element.time
-                }
-            )).map(x => (x.id, 1)).keyBy(x=> x._1).timeWindow(Time.hours(1)).sum(1)
-
-        windowedStream.print("===>")
-       env.execute("=== uv demo ====")
+//        val windowedStream = stream.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(10))
+//            .withTimestampAssigner(
+//                new SerializableTimestampAssigner[UserBehavior]() {
+//                    override def extractTimestamp(element: UserBehavior, recordTimestamp: Long): Long = element.time
+//                }
+//            )).map(x => (x.id, 1)).keyBy(x=> x._1).timeWindow(Time.hours(1)).sum(1)
+//
+//        windowedStream.print("===>")
+//       env.execute("=== uv demo ====")
 
     }
 }

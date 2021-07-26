@@ -12,6 +12,9 @@
         <module>flink-stream</module>
         <module>flink-sql</module>
         <module>utils</module>
+        <module>flink-dev</module>
+        <module>flink-sql-parser</module>
+        <module>flink-sql-udf</module>
     </modules>
 
     <properties>

@@ -10,6 +10,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>flink-stream</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <properties>
         <flink.version>1.11.1</flink.version>
@@ -40,6 +52,13 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-elasticsearch7_2.11</artifactId>
             <version>${flink.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner-blink_${scala.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--guava bloomfilter -->

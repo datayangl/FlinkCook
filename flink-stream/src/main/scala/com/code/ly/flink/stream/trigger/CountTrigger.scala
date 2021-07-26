@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow
  * @param threshold 触发值
  * @tparam T
  */
-class CountTrigger[T](threshold:Int) extends  Trigger[T, TimeWindow]{
+class CountTrigger[T](threshold:Int) extends Trigger[T, TimeWindow]{
     var count = 0
     override def onElement(element: T, timestamp: Long, window: TimeWindow, ctx: Trigger.TriggerContext): TriggerResult = {
         ctx.registerEventTimeTimer(window.maxTimestamp())

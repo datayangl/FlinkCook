@@ -25,7 +25,6 @@ case class Rule(
    merge_fields:Seq[String],   //数据归并判断字段
    merge_time:Long          //数据归并周期
 )
-
 {
     // 重写toString,方便打印
     override def toString: String = {
